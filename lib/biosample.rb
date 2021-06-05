@@ -9,15 +9,41 @@ require 'erb'
 #require 'rdf/turtle'
 #require 'rdf/vocab'
 #include RDF
-
+require 'date'
+require 'pp'
 
 module DDBJ
 module Utils
 class BioSampleSet
   include Enumerable
 
-  def initialize(xml)
+  def initialize(xml, params ={})
     @xml =xml
+    set_params params
+    #@params = params
+    #pp @params
+  end
+
+  def set_params params
+      #puts "### set parms #{params}"
+      if params['begin'] or params['end']
+        unless b = params['begin'] 
+          b = '2004-04-04'
+        end
+        @date_begin = Date.parse(b)
+        
+        unless e = params['end']
+           @date_end = Date.today 
+        else
+           @date_end = Date.parse(e)
+        end
+        puts "### Filtered by date range (#{@date_begin.to_s} .. #{@date_end.to_s})."
+        #@date_range = (@date_begin..@date_end).each do |date|
+        #    pp date.to_s
+        #end
+      else
+        @no_filter = true
+      end
   end
 
   def each
@@ -36,7 +62,12 @@ class BioSampleSet
 
   def to_tsv
     self.each_with_index do |biosample,i|
-       puts biosample.to_tsv
+       o =  biosample.to_object
+       #pp biosample.to_object
+       if @no_filter or ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date])
+           puts [o[:accession],o[:publication_date],o[:last_update]].join("\t")
+       end
+       #puts biosample.to_tsv
     end
   end
 
@@ -146,6 +177,13 @@ class BioSample
     @biosample.css('Owner > Name').inner_text
   end
 
+  def to_object
+      {
+          :accession => self.accession,
+          :publication_date => self.publication_date,
+          :last_update => self.last_update
+      }
+  end
   def to_tsv
      [self.accession, self.publication_date, self.last_update ].join("\t")
   end
