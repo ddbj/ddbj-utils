@@ -25,7 +25,9 @@ class BioSampleSet
   end
 
   def set_params params
-      #puts "### set parms #{params}"
+      puts "### set parms #{params}"
+      @outdir = params['outdir'] || './'
+      @split_year = params['split-year']
       if params['begin'] or params['end']
         unless b = params['begin'] 
           b = '2004-04-04'
@@ -60,6 +62,40 @@ class BioSampleSet
     end
   end
 
+  def to_output
+    @out_files = Hash.new(0)
+    self.each_with_index do |biosample,i|
+      o =  biosample.to_object
+      #pp o
+      if @no_filter or ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date])
+        puts [o[:accession],o[:publication_date],o[:last_update]].join("\t")
+        d = Date.parse(o[:publication_date])
+        y = d.year
+        basedir = @split_year ? "#{@outdir}/#{y}" : "#{@outdir}"
+        out_file_name = "#{basedir}/split-biosample.xml"
+        #out_file_name = @split_year ? "test-out-#{y}.xml" : "test-out.xml"
+        @out_files[out_file_name] += 1
+        unless FileTest.exist?(out_file_name)
+            FileUtils.mkdir_p basedir 
+            File.open(out_file_name, 'w+') {|f|
+                f.puts '<?xml version="1.0" encoding="UTF-8"?>'
+                f.puts '<BioSampleSet>'
+            }
+        end
+        @out_files[out_file_name] += 1
+        File.open(out_file_name, 'a') {|f|
+          f.puts o[:xml]
+        }
+      end
+    end
+    @out_files.keys.each do |out_file_name|
+        #puts out_file_name
+        File.open(out_file_name, 'a') {|f|
+            f.puts '</BioSampleSet>'
+        }
+    end
+  end
+
   def to_tsv
     self.each_with_index do |biosample,i|
        o =  biosample.to_object
@@ -84,6 +120,7 @@ end
 class BioSample
 
   def initialize(xml)
+
     @biosample = Nokogiri::XML(xml).css("BioSample")
     raise NameError, "biosample element not found" unless @biosample
 
@@ -181,7 +218,9 @@ class BioSample
       {
           :accession => self.accession,
           :publication_date => self.publication_date,
-          :last_update => self.last_update
+          :last_update => self.last_update,
+          #:xml => @xml
+          :xml => @biosample.to_xml
       }
   end
   def to_tsv
