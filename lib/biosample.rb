@@ -69,7 +69,7 @@ class BioSampleSet
       #pp o
       #if @no_filter or ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date])
       if @no_filter or (o[:publication_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date]))
-        puts [o[:accession],o[:publication_date],o[:last_update]].join("\t")
+        #`puts [o[:accession],o[:publication_date],o[:last_update]].join("\t")
         d = Date.parse(o[:publication_date])
         y = d.year
         basedir = @split_year ? "#{@outdir}/#{y}" : "#{@outdir}"
