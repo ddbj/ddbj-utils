@@ -64,7 +64,8 @@ class BioSampleSet
     self.each_with_index do |biosample,i|
        o =  biosample.to_object
        #pp biosample.to_object
-       if @no_filter or ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date])
+       #pp [o[:accession], o[:publication_date]]
+       if @no_filter or (o[:publication_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date]))
            puts [o[:accession],o[:publication_date],o[:last_update]].join("\t")
        end
        #puts biosample.to_tsv
