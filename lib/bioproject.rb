@@ -74,8 +74,13 @@ class BioProjectSet
       #if @no_filter or (o[:publication_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date]))
       if @no_filter or (o[:submitted_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:submitted_date]))
         #`puts [o[:accession],o[:publication_date],o[:last_update]].join("\t")
+        begin
         d = Date.parse(o[:submitted_date])
         y = d.year
+        rescue
+              warn "#{o[:submitted_date]}"
+              y="9999"
+        end
         basedir = @split_year ? "#{@outdir}/#{y}" : "#{@outdir}"
         out_file_name = "#{basedir}/split-bioproject.xml"
         #out_file_name = @split_year ? "test-out-#{y}.xml" : "test-out.xml"
