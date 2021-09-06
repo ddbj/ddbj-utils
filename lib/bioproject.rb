@@ -25,7 +25,7 @@ class BioProjectSet
   end
 
   def set_params params
-      puts "### set parms #{params}"
+      warn "### set parms #{params}"
       @outdir = params['outdir'] || './'
       @split_year = params['split-year']
       if params['begin'] or params['end']
@@ -71,9 +71,10 @@ class BioProjectSet
       #pp o[:publication_date]
       #pp o[:last_update]
       #if @no_filter or ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date])
-      if @no_filter or (o[:publication_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date]))
+      #if @no_filter or (o[:publication_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date]))
+      if @no_filter or (o[:submitted_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:submitted_date]))
         #`puts [o[:accession],o[:publication_date],o[:last_update]].join("\t")
-        d = Date.parse(o[:publication_date])
+        d = Date.parse(o[:submitted_date])
         y = d.year
         basedir = @split_year ? "#{@outdir}/#{y}" : "#{@outdir}"
         out_file_name = "#{basedir}/split-bioproject.xml"
@@ -101,13 +102,14 @@ class BioProjectSet
   end
 
   def to_tsv
+    puts ["#accession","dateCreated", "dateModified", "datePublished"].join("\t")
     self.each_with_index do |bioproject,i|
        o =  bioproject.to_object
        #pp bioproject.to_object
        #pp [o[:accession], o[:publication_date]]
+       if @no_filter or (o[:submitted_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:submitted_date]))
        #if @no_filter or (o[:publication_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date]))
-       if @no_filter or (o[:publication_date] != "" and ( @date_begin .. @date_end ).cover? Date.parse(o[:publication_date]))
-           puts [o[:accession],o[:submitted_date],o[:publication_date],o[:last_update]].join("\t")
+           puts [o[:accession],o[:submitted_date],o[:last_update], o[:publication_date] ].join("\t")
        end
        #puts bioproject.to_tsv
     end
@@ -124,7 +126,6 @@ class BioProjectSet
 end
 
 class BioProject
-
 
   def initialize(xml)
 
@@ -143,7 +144,7 @@ class BioProject
     #else
     #  @ddbj = false
     #end
-    get_release_date
+    #get_release_date
   end
 
   def id
@@ -188,7 +189,7 @@ class BioProject
   def publication_date
     #puts @bioproject
     #puts @bioproject.xpath('//Publication/@date') 
-    @release_date = @bioproject.xpath('//Publication/@date').to_s || @bioproject.css('Description > ProjectName' ).inner_text
+    @release_date = @bioproject.xpath('//Publication/@date').to_s
     #@bioproject.css('Publication').attribute('date').value 
     #exit
     #if  @bioproject.attribute("publication_date").nil?
@@ -196,6 +197,10 @@ class BioProject
     #else
     #  @bioproject.attribute("publication_date").value
     #end
+  end
+
+  def release_date
+      @bioproject.xpath('//ProjectReleaseDate').inner_text
   end
 
   def get_release_date
@@ -215,8 +220,7 @@ class BioProject
       #ProjectReleaseDate
 
   def last_update
-    #@bioproject.attribute("last_update").value
-    @release_date #TODO
+    @bioproject.xpath('//Submission/@last_update').to_s
   end
 
   def title
@@ -263,14 +267,14 @@ class BioProject
   def to_object
       {
           :accession => self.accession,
+          :publication_date => self.release_date , ## self.publication_date
           :submitted_date => self.submitted_date,
-          :publication_date => @release_date , ## self.publication_date
-          :last_update => @release_date ,      ## self.last_update
+          :last_update => self.last_update ,
           :xml => @bioproject.to_xml
       }
   end
   def to_tsv
-     [self.accession, self.submitted_date, @release_date, self.last_update ].join("\t")
+     [self.accession, self.submitted_date, self.last_update, self.release_date ].join("\t")
   end
 
   def to_ttl
