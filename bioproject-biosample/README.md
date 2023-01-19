@@ -16,6 +16,7 @@ R script
 library(data.table)
 ncbi <- fread("ncbi_bp2bs.tsv", header=F, sep="\t")
 ncbi <- ncbi[grep("SAM", ncbi$V2),]
+ncbi <- ncbi[grep("[?]", ncbi$V2, invert=T),]
 ncbi <- unique(ncbi)
 fwrite(ncbi, "bioproject2biosample.tsv", row.names=F, col.names=F, quote=F, sep="\t")
 ```
