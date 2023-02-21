@@ -1,6 +1,6 @@
 ## BioProject_Umbrella-BioProject
 
-Extract bioproject-biosample from xml file (https://ddbj.nig.ac.jp/public/ddbj_database/bioproject/bioproject.xml)
+Extract BioProject_umbrella-BioProject from xml file (https://ddbj.nig.ac.jp/public/ddbj_database/bioproject/bioproject.xml)
 ```
 awk -v OFS="\t" '{if($0 ~ "<ProjectIDRef archive="){bioproject=$0}; if($0 ~ "<MemberID archive=") { print bioproject, $0}}' bioproject.xml > tab_temp_ncbi_umbrella2bp.txt;
 awk -F"\"" -v OFS="\t" '{print $12, $6}' tab_temp_ncbi_umbrella2bp.txt | sort | uniq > ncbi_umbrella2bp.tsv ;
