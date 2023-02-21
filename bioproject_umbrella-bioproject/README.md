@@ -18,3 +18,4 @@ ncbi <- ncbi[grep("PR", ncbi$V2),]
 ncbi <- unique(ncbi)
 fwrite(ncbi, "bioprojectUmbrella2bioproject.tsv", row.names=F, col.names=F, quote=F, sep="\t")
 ```
+Data is available at (https://ddbj.nig.ac.jp/public/rdf/dblink/bioproject_umbrella-bioproject/)
