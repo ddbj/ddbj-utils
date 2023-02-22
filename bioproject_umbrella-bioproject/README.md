@@ -2,8 +2,8 @@
 
 Extract BioProject_umbrella-BioProject from xml file (https://ddbj.nig.ac.jp/public/ddbj_database/bioproject/bioproject.xml)
 ```
-awk -v OFS="\t" '{if($0 ~ "<ProjectIDRef archive="){bioproject=$0}; if($0 ~ "<MemberID archive=") { print bioproject, $0}}' bioproject.xml > tab_temp_ncbi_umbrella2bp.txt;
-awk -F"\"" -v OFS="\t" '{print $12, $6}' tab_temp_ncbi_umbrella2bp.txt | sort | uniq > ncbi_umbrella2bp.tsv ;
+awk -v OFS="\t" '{if($0 ~ "<ProjectIDRef archive="){bioproject=$0}; if($0 ~ "<Hierarchical type=\"TopAdmin\">") { getline; print bioproject, $0}}' bioproject.xml > tab_temp_ncbi_umbrella2bp.txt;
+awk '{print $8 ,$4}' tab_temp_ncbi_umbrella2bp.txt | awk -v OFS="\t" '{gsub("accession=", ""); gsub("\"",""); gsub("/>",""); print $1,$2}' | sort | uniq > ncbi_umbrella2bp.tsv;
 ```
 Remove redundancies and filter BioProject IDs that do not start with "PR"
 ```
