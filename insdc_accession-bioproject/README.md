@@ -30,4 +30,6 @@ head source/split_nonbulk/nonbulk_aa
 /release/ddbjbct108.seq
 /release/ddbjbct109.seq
 ```
-
+Data can be accessed:</br>
+[bioproject](https://ddbj.nig.ac.jp/public/rdf/dblink/insdc-bioproject/)</br>
+[biosample](https://ddbj.nig.ac.jp/public/rdf/dblink/insdc-biosample/)</br>
