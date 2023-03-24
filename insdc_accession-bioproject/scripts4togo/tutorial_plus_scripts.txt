@@ -1,0 +1,58 @@
+#
+#  scripts to generate INSDC sequence accession - bioproject and INSDC sequence accession - biosample
+#  
+#
+#  Created by Andrea Ghelfi on 2023/03/24.
+#
+
+# list of all non bulk files (2189)
+
+#!/bin/bash
+while IFS= read -r filename; do
+    seq=`echo ${filename} | cut -f6 -d"/" `
+    awk '/VERSION/ {p=1} p; /SOURCE/ {p=0}' ${filename} > tmp_nonbulk/${seq}
+done < list_nonbulk.txt
+
+mkdir nonbulk_bioproject
+
+ls tmp_nonbulk/*.seq > list_tmp_nonbulk.txt
+###
+# extract pair sequence accession - bioproject
+###
+nano extract_tmp_nonbulk_bp.sh
+
+#!/bin/bash
+while IFS= read -r filename; do
+    #echo ${filename}
+    seq=`echo ${filename} | cut -f2 -d"/" `
+    awk '{ if ( /,$/) {printf $0} else {print}}' ${filename} | awk -v OFS="\t" '{if($1 == "VERSION"){accession = $2}; if($0 ~ "BioProject") {print accession, $0}}' | awk '{sub("DBLINK",""); sub("BioProject",""); gsub(":",""); gsub(" ",""); print $0}' | awk -F'\t' -v OFS='\t' '{gsub(",", ORS$1"\t"); print}' > nonbulk_bioproject/${seq}
+done < list_tmp_nonbulk.txt
+
+sh extract_tmp_nonbulk_bp.sh
+
+# clean sequence accession - bioproject
+cat nonbulk_bioproject/*.seq > nonbulk_accession2bioproject.tsv
+awk '/PRJN|PRJD|PRJE/' nonbulk_accession2bioproject.tsv | awk -F'\t' -v OFS='\t' '{print $2, $1}' nonbulk_accession2bioproject.tsv | awk -F'.' '{print $1}' | awk -F'\t' -v OFS='\t' '{print $2, $1}' > clean_nonbulk_accession2bioproject.tsv
+
+# merge bulk and non-bulk data
+cat bulk_accession2bioproject.tsv clean_nonbulk_accession2bioproject.tsv > insdc_accession2bioproject.tsv
+
+###
+# extract pair sequence accession - biosample
+###
+nano extract_tmp_nonbulk_bs.sh
+#!/bin/bash
+while IFS= read -r filename; do
+    #echo ${filename}
+    seq=`echo ${filename} | cut -f2 -d"/" `
+    awk '{ if ( /,$/) {printf $0} else {print}}' ${filename} | awk -v OFS="\t" '{if($1 == "VERSION"){accession = $2}; if($0 ~ "BioSample") {print accession, $0}}' | awk '{sub("DBLINK",""); sub("BioSample",""); gsub(":",""); gsub(" ",""); print $0}' | awk -F'\t' -v OFS='\t' '{gsub(",", ORS$1"\t"); print}' > ../insdc-biosample/nonbulk_biosample/${seq}
+done < list_tmp_nonbulk.txt
+
+sh extract_tmp_nonbulk_bs.sh
+
+# clean sequence accession - biosample
+cat nonbulk_biosample/*.seq > nonbulk_accession2biosample.tsv
+awk '/SAMN|SAMD|SAME/' nonbulk_accession2biosample.tsv | awk -F'\t' -v OFS='\t' '{print $2, $1}' | awk -F'.' '{print $1}' | awk -F'\t' -v OFS='\t' '{print $2, $1}' > clean_nonbulk_accession2biosample.tsv
+
+# merge bulk and non-bulk data
+cat bulk_accession2biosample.tsv clean_nonbulk_accession2biosample.tsv > insdc_accession2biosample.tsv
