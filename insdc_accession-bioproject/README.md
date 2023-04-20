@@ -1,8 +1,8 @@
 ## insdc_accession2bioproject
 
-Generate TOGO-ID pairs for insdc_accession and bioproject. There are two types of source data:
-a) bulk (described on insdc_accession_master-bioproject)
-b) non-bulk (this document)
+Generate TOGO-ID pairs for insdc_accession and bioproject. There are two types of source data: </br>
+a) bulk (described on insdc_accession_master-bioproject)</br>
+b) non-bulk (this document)</br>
 
 ### Non-bulk data
 Source files (total of 2,189 files):
