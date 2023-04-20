@@ -1,7 +1,7 @@
 ## insdc_accession2bioproject
 
 Generate TOGO-ID pairs for insdc_accession and bioproject. There are two types of source data: </br>
-a) bulk (described on insdc_accession_master-bioproject)</br>
+a) [bulk](https://github.com/ddbj/ddbj-utils/tree/main/insdc_master-bioproject) (described on insdc_accession_master-bioproject)</br>
 b) non-bulk (this document)</br>
 
 ### Non-bulk data
