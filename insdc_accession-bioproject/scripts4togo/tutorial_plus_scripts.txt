@@ -52,7 +52,5 @@ sh extract_tmp_nonbulk_bs.sh
 
 # clean sequence accession - biosample
 cat nonbulk_biosample/*.seq > nonbulk_accession2biosample.tsv
-awk '/SAMN|SAMD|SAME/' nonbulk_accession2biosample.tsv | awk -F'\t' -v OFS='\t' '{print $2, $1}' | awk -F'.' '{print $1}' | awk -F'\t' -v OFS='\t' '{print $2, $1}' > clean_nonbulk_accession2biosample.tsv
+awk '/SAMN|SAMD|SAME/' nonbulk_accession2biosample.tsv | awk -F'\t' -v OFS='\t' '{print $2, $1}' | awk -F'.' '{print $1}' | awk -F'\t' -v OFS='\t' '{print $2, $1}' > insdc_accession2biosample.tsv
 
-# merge bulk and non-bulk data
-cat bulk_accession2biosample.tsv clean_nonbulk_accession2biosample.tsv > insdc_accession2biosample.tsv
