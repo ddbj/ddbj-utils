@@ -32,10 +32,7 @@ sh extract_tmp_nonbulk_bp.sh
 
 # clean sequence accession - bioproject
 cat nonbulk_bioproject/*.seq > nonbulk_accession2bioproject.tsv
-awk '/PRJN|PRJD|PRJE/' nonbulk_accession2bioproject.tsv | awk -F'\t' -v OFS='\t' '{print $2, $1}' nonbulk_accession2bioproject.tsv | awk -F'.' '{print $1}' | awk -F'\t' -v OFS='\t' '{print $2, $1}' > clean_nonbulk_accession2bioproject.tsv
-
-# merge bulk and non-bulk data
-cat bulk_accession2bioproject.tsv clean_nonbulk_accession2bioproject.tsv > insdc_accession2bioproject.tsv
+awk '/PRJN|PRJD|PRJE/' nonbulk_accession2bioproject.tsv | awk -F'\t' -v OFS='\t' '{print $2, $1}' nonbulk_accession2bioproject.tsv | awk -F'.' '{print $1}' | awk -F'\t' -v OFS='\t' '{print $2, $1}' > insdc_accession2bioproject.tsv
 
 ###
 # extract pair sequence accession - biosample
