@@ -1,19 +1,8 @@
 ## insdc_accession2bioproject
 
 Generate TOGO-ID pairs for insdc_accession and bioproject. There are two types of source data:
-a) bulk
-b) non-bulk
-
-### Bulk data
-Source files:
-```
-/trad/tpa/tls/TPA_TLS_ORGANISM_LIST.txt
-/trad/tpa/wgs/TPA_WGS_ORGANISM_LIST.txt
-/trad/tpa/tsa/TPA_TSA_ORGANISM_LIST.txt
-/trad/tls/TLS_ORGANISM_LIST.txt
-/trad/wgs/WGS_ORGANISM_LIST.txt
-/trad/tsa/TSA_ORGANISM_LIST.txt
-```
+a) bulk (described on insdc_accession_master-bioproject)
+b) non-bulk (this document)
 
 ### Non-bulk data
 Source files (total of 2,189 files):
@@ -31,5 +20,5 @@ head source/split_nonbulk/nonbulk_aa
 /release/ddbjbct109.seq
 ```
 Data can be accessed:</br>
-[bioproject](https://ddbj.nig.ac.jp/public/rdf/dblink/insdc-bioproject/)</br>
-[biosample](https://ddbj.nig.ac.jp/public/rdf/dblink/insdc-biosample/)</br>
+[insdc-bioproject](https://ddbj.nig.ac.jp/public/rdf/dblink/insdc-bioproject/)</br>
+[insdc-biosample](https://ddbj.nig.ac.jp/public/rdf/dblink/insdc-biosample/)</br>
