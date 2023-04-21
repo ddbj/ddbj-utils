@@ -17,11 +17,11 @@ accession_len6$master <- paste(accession_len6$master, "000000000", sep="")
 ncbi <- rbind(accession_len4, accession_len6)
 # # accession to bioproject
 master2bp <- unique(ncbi[, c('master','BioProject')])
+master2bp <- master2bp[grep("PRJN|PRJD|PRJE", master2bp$BioProject),]
 master2bp <- master2bp[complete.cases(master2bp), ]
-master2bp <-  master2bp[master2bp$BioProject != "",]
 fwrite(master2bp, "master_accession2bioproject.tsv", row.names=F, col.names=F, quote=F, sep="\t")
 # accession to biosample
 master2bs <- unique(ncbi[, c('master','BioSample')])
-master2bs <-  master2bs[master2bs$BioSample != "",]
+master2bs <- master2bs[grep("SAMN|SAMD|SAME", master2bs$BioSample),]
 master2bs <- master2bs[complete.cases(master2bs), ]
 fwrite(master2bs, "../insdc_master-biosample/master_accession2biosample.tsv", row.names=F, col.names=F, quote=F, sep="\t")
